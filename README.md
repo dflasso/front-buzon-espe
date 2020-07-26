@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# front-buzon-espe
+Frontend Buzón de Sugerencias ESPE
 
 ## Available Scripts
 
@@ -66,8 +66,4 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 
 ### `npm run build` fails to minify
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
-=======
-# front-buzon-espe
-Frontend Buzón de Sugerencias ESPE
->>>>>>> 02005c7a57fceece37b023933625b02a559b96e3
+
