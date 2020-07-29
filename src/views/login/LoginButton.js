@@ -2,14 +2,13 @@ import React, { useState, Fragment, useEffect } from 'react';
 import { useGoogleAuth } from '../../hooks/GoogleAuthContext';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-
+import { clientBackendHeroko } from '../../config/axios';
 const LoginButton = () => {
 
-    const { signIn, isSignedIn,  signOut } = useGoogleAuth();
+    const { signIn, isSignedIn, signOut, googleUser } = useGoogleAuth();
     const [signInUser, setSignIn] = useState(0);
     const history = useHistory();
     useEffect(() => {
-        console.log(isSignedIn + "   " + signInUser )
         if (isSignedIn && signInUser === 1) {
             setSignIn(2);
         }
@@ -20,7 +19,23 @@ const LoginButton = () => {
         signOut();
     };
 
-    const handleStart = () => {
+    const handleStart = async () => {
+        const data = {
+            "email": googleUser.profileObj.email,
+            "lastname": googleUser.profileObj.familyName,
+            "name": googleUser.profileObj.givenName
+        };
+        console.log(data);
+        await clientBackendHeroko.post('/v1/resources-user',data).then(
+            response => {
+                console.log(response);
+            }
+        ).catch(
+            exception => {
+                console.log({exception})
+            }
+        );
+        
         history.push("/community-espe");
     }
 
