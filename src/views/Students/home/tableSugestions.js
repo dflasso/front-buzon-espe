@@ -8,6 +8,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { clientBackendHeroko } from '../../../config/axios';
 import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
+import BtnDetailSuggestion from './buttons/detailSuggestion';
+import BtnShareSuggestion from './buttons/shareSuggestion';
 
 const useStyles = makeStyles(theme => ({
   buscador: {
@@ -33,7 +35,9 @@ export default function MaterialTableDemo() {
   const columns = [
     { title: 'Tema', field: 'topic.name', width: '10%', cellStyle: stylesTable.cellLeft },
     { title: 'Sugerencia', field: 'description', width: '40%', cellStyle: stylesTable.cellLeft },
+    { title: 'Más detalles', cellStyle: stylesTable.cellTable, render: rowData => <BtnDetailSuggestion />, width: '5%' },
     { title: 'Me gusta', cellStyle: stylesTable.cellTable, render: rowData => <BtnLikeSugestion />, width: '5%' },
+    { title: 'Compartir', cellStyle: stylesTable.cellTable, render: rowData => <BtnShareSuggestion />, width: '5%' },
   ]
 
   const getSuggestions = async () => {

@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import {
-     makeStyles,  DialogTitle, DialogContentText,
+    makeStyles, DialogTitle, DialogContentText,
     Dialog, DialogContent, Button, Stepper, Step, StepLabel, Typography
 } from '@material-ui/core';
 
@@ -73,9 +73,9 @@ const SendCompaint = () => {
     const renderForms = () => {
         switch (activeStep) {
             case 0:
-                return <FormUser/>;
+                return <FormUser />;
             case 1:
-                return <FormComplaint/>;
+                return <FormComplaint />;
             default:
                 return null;
         }
@@ -95,6 +95,7 @@ const SendCompaint = () => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
+                        <label > Los campos marcados con (<font color="#d50000">*</font>) son obligatorio. </label>
                         {renderForms()}
                     </DialogContentText>
 
