@@ -1,10 +1,8 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 
 //componentes de la vista
 import TableSugestions from './tableSugestions';
-import InfoUser from './infoUser';
 
 const useStyles = makeStyles({
     root: {
@@ -16,14 +14,13 @@ const Home = () => {
     const classes = useStyles();
 
     return (
-        <Grid container spacing={1} className={classes.root}>
-            <Grid item xs={8}>
-               <TableSugestions/>
-            </Grid>
-            <Grid item xs={4}>
-               <InfoUser/>
-            </Grid>
-        </Grid>
+        <div className={classes.root}>
+            <div class="row">
+                <div class="col-sm">
+                    <TableSugestions />
+                </div>
+            </div>
+        </div>
     );
 }
 

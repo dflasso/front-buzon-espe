@@ -1,10 +1,6 @@
 const initialState = {
-    items: [
-        { id: 1, Name: 'Inicio' },
-        { id: 2, Name: 'Sugerencias' },
-        { id: 3, Name: 'Denuncias' },
-    ],
-    itemSelected: { id: 1, Name: 'Inicio' },
+    items: [],
+    itemSelected: { idResource: 5, name: 'Inicio', description: 'Administración Buzón' },
 };
 
 export default function (state = initialState, action) {
@@ -13,6 +9,12 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 itemSelected: action.payload
+            };
+
+        case 'ADD_RESOURSE':
+            return {
+                items: action.payload,
+                itemSelected: { idResource: 5, name: 'Inicio', description: 'Administración Buzón' },
             };
         default:
             return state;

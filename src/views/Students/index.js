@@ -1,26 +1,25 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { Redirect } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
-import { useGoogleAuth } from "../../hooks/GoogleAuthContext";
 
 import Header from '../../widgets/header';
 
 import HomeContent from './home';
+import Suggestions from './Suggestions';
+import Complaint from './Complaint';
 
 const Home = ({ component: Component, ...rest }) => {
-    const { isSignedIn } = useGoogleAuth();
     const itemSelected = useSelector(state => state.resources.itemSelected);
+    const isSignedIn = useSelector(state => state.user.auth);
 
     const updateContent = () => {
-        switch (itemSelected.id) {
+        switch (itemSelected.idResource) {
+            case 5:
+                return <HomeContent/>;
             case 1:
-                return <HomeContent/>;
+                return <Suggestions/>;
             case 2:
-                return <HomeContent/>;
-            case 2:
-                return <HomeContent/>;
+                return <Complaint/>;
             default:
                 return <HomeContent/>;
         }
@@ -30,7 +29,7 @@ const Home = ({ component: Component, ...rest }) => {
         <Fragment>
             {isSignedIn ?
                 <Fragment>
-                    <Header title={itemSelected.Name}/>
+                    <Header title={itemSelected.description}/>
                     <main>
                         {updateContent()}
                     </main>

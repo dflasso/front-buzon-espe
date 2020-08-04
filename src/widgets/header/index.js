@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
-    AppBar, Toolbar, Typography, IconButton, MenuItem, Menu
+    AppBar, Toolbar,  IconButton, MenuItem, Menu
 } from '@material-ui/core';
 
 
@@ -17,13 +17,14 @@ const useStyles = makeStyles((theme) => ({
 
     title: {
         flexGrow: 1,
+        color: 'rgba(0,83,28,1)'
     },
 }));
 
 
 const Header = ({ title }) => {
     const classes = useStyles();
-    const [auth, setAuth] = useState(true);
+    const auth = true;
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -38,13 +39,11 @@ const Header = ({ title }) => {
 
 
     return (
-        <header>
+        <div>
             <AppBar position="static">
                 <Toolbar>
                     <MenuApp />
-                    <Typography variant="h6" className={classes.title}>
-                        {title}
-                    </Typography>
+                    <h1 className={classes.title}>   {title}          </h1>
                     {auth && (
                         <div>
                             <IconButton
@@ -78,7 +77,7 @@ const Header = ({ title }) => {
                     )}
                 </Toolbar>
             </AppBar>
-        </header>
+        </div>
     );
 }
 

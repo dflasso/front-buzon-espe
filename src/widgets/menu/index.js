@@ -15,9 +15,7 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 const useStyles = makeStyles(theme => ({
     list: {
         width: 250,
-    },
-    fullList: {
-        width: 'auto',
+        color: 'rgba(0,83,28,1)'
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -47,31 +45,31 @@ export default function SwipeableTemporaryDrawer() {
 
     const RederIconItemMenu = (idItem) => {
         switch (idItem) {
+            case 5:
+                return <HomeIcon  style={{color: 'rgba(0,83,28,1)'}}/>;
             case 1:
-                return <HomeIcon />;
+                return <DraftsIcon style={{color: 'rgba(0,83,28,1)'}}/>;
             case 2:
-                return <DraftsIcon />;
-            case 3:
-                return <EmailIcon />;
+                return <EmailIcon style={{color: 'rgba(0,83,28,1)'}}/>;
             default:
                 return null;
         }
     }
 
     const list = () => {
+        const itemsMenu = resources.sort((a,b)=>  b.idResource - a.idResource);
         return (
         <div
             className={classes.list}
-            role="menuApp"
             onClick={handleOpenMenu}
             onKeyDown={handleCloseMenu}
         >
             <List>
                 {
-                    resources.map(item => (
-                        <ListItem button key={item.id} onClick={() => handleSelectionItem(item)}>
-                            <ListItemIcon>{RederIconItemMenu(item.id)}</ListItemIcon>
-                            <ListItemText primary={item.Name} />
+                    itemsMenu.map(item => (
+                        <ListItem button key={item.idResource} onClick={() => handleSelectionItem(item)}>
+                            <ListItemIcon>{RederIconItemMenu(item.idResource)}</ListItemIcon>
+                            <ListItemText primary={item.name}  color="rgba(0,83,28,1)" />
                         </ListItem>
                     ))
                 }
@@ -85,7 +83,7 @@ export default function SwipeableTemporaryDrawer() {
             <React.Fragment >
                 <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
                     onClick={handleOpenMenu} >
-                    <MenuIcon />
+                    <MenuIcon  style={{color: 'rgba(0,83,28,1)'}}/>
                 </IconButton>
 
                 <SwipeableDrawer
