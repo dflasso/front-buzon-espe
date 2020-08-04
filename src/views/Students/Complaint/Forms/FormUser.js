@@ -57,6 +57,7 @@ const FromUser = () => {
         if (update) {
             return (<LinearProgress />);
         } else {
+            getInfoUser();
             return (
                 <form>
                     <Grid container spacing={1} justify="center">
