@@ -1,5 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react';
-import { useGoogleAuth } from '../../hooks/GoogleAuthContext';
+import React, { useState, Fragment } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { clientBackendHeroko } from '../../config/axios';
@@ -12,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { signInUserAction } from '../../redux/actions/userActions';
 import { addResourcesAction } from '../../redux/actions/resourcesActions';
 
+import Swal from 'sweetalert2'
 //estilos
 import './login.css'
 
@@ -25,30 +25,14 @@ const useStyles = makeStyles((theme) => ({
 
 const LoginButton = () => {
     const classes = useStyles();
-    const { signIn, isSignedIn, signOut, googleUser } = useGoogleAuth();
     const history = useHistory();
-    const [open, setOpen] = useState(false);
     const [openDialogPre, setOpenDialogPre] = useState(false);
-    const [startProcessAuth, setStartProcessAuth] = useState(false);
     const [openLoader, setOpenLoader] = useState(false);
     const [erroDialog, setErrorDialog] = useState(false);
-
 
     const dispatch = useDispatch();
     const signInUser = user => dispatch(signInUserAction(user));
     const addResources = resources => dispatch(addResourcesAction(resources));
-
-    useEffect(() => {
-        if (typeof googleUser !== 'undefined' && startProcessAuth) {
-            setTimeout(() => { setOpen(true) }, 2000);
-
-        }
-    }, [googleUser, open, startProcessAuth]);
-
-    const handleClose = () => {
-        signOut();
-        setOpen(false);
-    };
 
     const handleCloseDialogError = () => {
         setErrorDialog(false);
@@ -62,16 +46,77 @@ const LoginButton = () => {
         setOpenDialogPre(true);
     }
 
-    const handleStart = async () => {
-        setOpenDialogPre(false);
-        if (isSignedIn) {
-            signOut();
+    const signIn = async () => {
+        const auth2 = window.gapi.auth2.getAuthInstance();
+        const options = window.gapi.auth2.SigninOptions;
+        if (typeof auth2 === "object") {
+            await auth2.signIn(options).then(
+                response => {
+                    const googleUser = response;
+                    handleConfirmEntry(googleUser);
+                }
+            ).catch(
+                exception => {
+                    let errorMsgHtml = "";
+                    if (exception.error) {
+                        if (exception.error === "popup_closed_by_user") {
+                            errorMsgHtml = `
+                            <div align="left"><strong>El error puedo suceder por:</strong>
+                            <ul>
+                            <li>Se ingreso un correo que no pertenece a la Universidad de las Fuerza Armadas - ESPE</li>
+                            <li>En el navegador se encontraba abierta la sesión de otro correo.</li>
+                            <li>Cuando el navegador Google Chrome está en modo incognito no permite guardar cookies. Google recomienda: 
+                            "Crear una excepción  para https://accounts.google.com agregando accounts.google.com en dominios permitidos."
+                            <a href="https://developers.google.com/identity/sign-in/web/troubleshooting#third-party_cookies_and_data_blocked">Más Información</a>
+                            </li>
+                            </ul>
+                            <strong>Recomendación: Utilizar la Aplicación en el navegador Mozilla Firefox en modo incógnito.</strong>
+                            <div>
+                            `;
+                        }
+                    } else {
+                        errorMsgHtml = "<strong> Ocurrio un error inesperado, intentes más tarde, o contáctese con soporte.</strong>";
+                    }
+                    Swal.fire({
+                        title: 'Error en la Autenticación.',
+                        html: errorMsgHtml,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.value) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                        }
+                    })
+                }
+            );
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'La api de google no es soportada en esté navegador.',
+                html: `<div align="left"><strong>Por favor prueba con estos navegadores</strong>
+                    <ul>
+                    <li>Google Chrome en macOS, Windows, Linux, Android, iOS </li>
+                    <li> Mozilla Firefox en macOS, Windows, Linux </li>
+                    <li> Safari en macOS y iOS </li>
+                    <li> Mozilla Firefox en macOS, Windows, Linux </li>
+                    </ul></div> `,
+            })
         }
-        signIn();
-        setStartProcessAuth(true);
     }
 
-    const handleConfirmEntry = async () => {
+    const handleStart = async () => {
+        setOpenDialogPre(false);
+        signIn();
+    }
+
+    const handleConfirmEntry = async (googleUser) => {
         setOpenLoader(true);
         await clientBackendHeroko.post("/v1/resources-user", {
             email: googleUser.profileObj.email,
@@ -85,12 +130,11 @@ const LoginButton = () => {
                     history.push("/community-espe");
                 }
                 setOpenLoader(false);
-                setOpen(false);
+
             }
         ).catch(
             exception => {
                 setOpenLoader(false);
-                setOpen(false);
                 setErrorDialog(true);
             }
         );
@@ -103,37 +147,6 @@ const LoginButton = () => {
             <Dialog
                 fullWidth
                 maxWidth="sm"
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="max-width-dialog-title"
-            >
-                <DialogTitle id="max-width-dialog-title">Gracias por Autenticarte</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Mediante este aplicativo usted puede:
-                    <ul>
-                            <li>
-                                Enviar Sugerencias a las Autoridades, con el fin de mejorar: procesos, el uso de instalaciones, entre otros.
-                        </li>
-                            <li>
-                                Denunciar actos que perjudiquen su integridad o la de otros.
-                        </li>
-                        </ul>
-                        El aplicativo enviara un correo con su mensaje a las autoridades.
-                    </DialogContentText>
-                    <DialogActions>
-                        <Button variant="outlined" color="primary" onClick={handleConfirmEntry}>
-                            De acuerdo
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleClose}>
-                            Salir
-                      </Button>
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
-            <Dialog
-                fullWidth
-                maxWidth="sm"
                 open={openDialogPre}
                 onClose={handleClosePre}
                 aria-labelledby="max-width-dialog-title"
@@ -142,9 +155,13 @@ const LoginButton = () => {
                 <DialogContent>
                     <DialogContentText>
                         Acontinuación usted deberá ingresar el correo de otorgado por la Universidad de las Fuerzas Armadas - ESPE. <br />
-                        <strong>Recuerde:</strong> La plataforma está destinada a los usuarios de la comunidad universitaria. <br />
+                        <strong>Recuerde:</strong> La plataforma está destinada solo a los usuarios de la comunidad universitaria. <br />
                         <strong>Nota:</strong> Si usted se encuentra en un navegador en el cual previamente inicio sesión con el correo otorgado por la Universidad de las Fuerzas Armadas - ESPE.
                         El sistema no le volvera a pedir que se autentique.
+                        <div class="alert alert-primary" role="alert">
+                            Se recomienda ingresar al aplicativo en el navegador Mozilla Firefox en modo incógnito, por
+                            razones de seguridad y compatibilidad.
+                        </div>
                     </DialogContentText>
                     <DialogActions>
 

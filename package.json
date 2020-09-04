@@ -18,7 +18,8 @@
     "react-swipeable-views": "^0.13.9",
     "react-use-googlelogin": "^0.12.5",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "sweetalert2": "^9.17.2"
   },
   "scripts": {
     "start": "react-scripts start",
