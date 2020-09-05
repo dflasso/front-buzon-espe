@@ -48,12 +48,14 @@ const LoginButton = () => {
 
     const signIn = async () => {
         const auth2 = window.gapi.auth2.getAuthInstance();
-        const options = window.gapi.auth2.SigninOptions;
         if (typeof auth2 === "object") {
-            await auth2.signIn(options).then(
-                response => {
-                    const googleUser = response;
-                    handleConfirmEntry(googleUser);
+            await auth2.signIn().then(
+                () => {
+                    const profile = auth2.currentUser.get().getBasicProfile();
+                    if(profile){
+                        handleConfirmEntry(profile);
+                    }
+                   
                 }
             ).catch(
                 exception => {
@@ -84,15 +86,7 @@ const LoginButton = () => {
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.value) {
-                            Swal.fire(
-                                'Deleted!',
-                                'Your file has been deleted.',
-                                'success'
-                            )
-                        }
+                        confirmButtonText: 'Aceptar'
                     })
                 }
             );
@@ -119,9 +113,9 @@ const LoginButton = () => {
     const handleConfirmEntry = async (googleUser) => {
         setOpenLoader(true);
         await clientBackendHeroko.post("/v1/resources-user", {
-            email: googleUser.profileObj.email,
-            lastname: googleUser.profileObj.familyName,
-            name: googleUser.profileObj.givenName
+            email: googleUser.getEmail(),
+            lastname: googleUser.getFamilyName(),
+            name: googleUser.getGivenName()
         }).then(
             response => {
                 if (response.status === 208) {
@@ -185,7 +179,7 @@ const LoginButton = () => {
                 onClose={handleCloseDialogError}
                 aria-labelledby="max-width-dialog-title"
             >
-                <DialogTitle id="max-width-dialog-title">Erro</DialogTitle>
+                <DialogTitle id="max-width-dialog-title">Error</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Ocurrio un error, en el proceso. Comuniquese con Soporte.
