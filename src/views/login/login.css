@@ -89,3 +89,24 @@ a:hover{
     background: linear-gradient(66deg, rgba(255,255,255,1) 0%, rgba(190,236,205,0.5550595238095238) 50%, rgba(255,255,255,1) 100%);
 
 }
+
+.div-subtitle{
+    background: linear-gradient(61deg, rgba(190,236,205,1) 68%, rgba(0,83,28,1) 100%);
+    color: rgba(0,83,28,1);
+    border-bottom: 1px solid #00531cad;
+    display: flex;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.container-info{
+    display: block;
+    justify-content: center;
+    padding-left: 5%;
+    padding-right: 5%;
+    border-color: rgba(0,83,28,1);
+    border-width: 1px;
+    border-radius: 8px;
+    margin-top: 1%;
+
+}

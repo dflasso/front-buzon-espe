@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {selectionItemAction} from '../../redux/actions/resourcesActions';
+import { selectionItemAction } from '../../redux/actions/resourcesActions';
 import { makeStyles } from '@material-ui/core/styles';
 import {
     IconButton, SwipeableDrawer, List, ListItem, ListItemIcon,
@@ -11,6 +11,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import HomeIcon from '@material-ui/icons/Home';
 import EmailIcon from '@material-ui/icons/Email';
 import DraftsIcon from '@material-ui/icons/Drafts';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 
 const useStyles = makeStyles(theme => ({
     list: {
@@ -43,39 +44,41 @@ export default function SwipeableTemporaryDrawer() {
         setOpenMenu(false);
     }
 
-    const RederIconItemMenu = (idItem) => {
+    const RenderIconItemMenu = (idItem) => {
         switch (idItem) {
-            case 5:
-                return <HomeIcon  style={{color: 'rgba(0,83,28,1)'}}/>;
-            case 1:
-                return <DraftsIcon style={{color: 'rgba(0,83,28,1)'}}/>;
-            case 2:
-                return <EmailIcon style={{color: 'rgba(0,83,28,1)'}}/>;
+            case "Inicio":
+                return <HomeIcon style={{ color: 'rgba(0,83,28,1)' }} />;
+            case "Sugerencias":
+                return <DraftsIcon style={{ color: 'rgba(0,83,28,1)' }} />;
+            case "Denuncias":
+                return <EmailIcon style={{ color: 'rgba(0,83,28,1)' }} />;
+            case "Admin. Denuncias": case "Admin. Sugerencias":
+                return <AssignmentIcon style={{ color: 'rgba(0,83,28,1)' }} />;
             default:
                 return null;
         }
     }
 
     const list = () => {
-        const itemsMenu = resources.sort((a,b)=>  b.idResource - a.idResource);
+        const itemsMenu = resources.sort((a, b) => b.idResource - a.idResource);
         return (
-        <div
-            className={classes.list}
-            onClick={handleOpenMenu}
-            onKeyDown={handleCloseMenu}
-        >
-            <List>
-                {
-                    itemsMenu.map(item => (
-                        <ListItem button key={item.idResource} onClick={() => handleSelectionItem(item)}>
-                            <ListItemIcon>{RederIconItemMenu(item.idResource)}</ListItemIcon>
-                            <ListItemText primary={item.name}  color="rgba(0,83,28,1)" />
-                        </ListItem>
-                    ))
-                }
+            <div
+                className={classes.list}
+                onClick={handleOpenMenu}
+                onKeyDown={handleCloseMenu}
+            >
+                <List>
+                    {
+                        itemsMenu.map(item => (
+                            <ListItem button key={item.idResource} onClick={() => handleSelectionItem(item)}>
+                                <ListItemIcon>{RenderIconItemMenu(item.name)}</ListItemIcon>
+                                <ListItemText primary={item.name} color="rgba(0,83,28,1)" />
+                            </ListItem>
+                        ))
+                    }
 
-            </List>
-        </div>);
+                </List>
+            </div>);
     };
 
     return (
@@ -83,7 +86,7 @@ export default function SwipeableTemporaryDrawer() {
             <React.Fragment >
                 <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
                     onClick={handleOpenMenu} >
-                    <MenuIcon  style={{color: 'rgba(0,83,28,1)'}}/>
+                    <MenuIcon style={{ color: 'rgba(0,83,28,1)' }} />
                 </IconButton>
 
                 <SwipeableDrawer

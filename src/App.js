@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 //vistas
 import moduleStudent from './views/Students';
-import moduleAdmin from './views/Admin';
 import Login from './views/login';
 
 //hooks - provaiders
@@ -20,7 +19,6 @@ function App() {
         <Router>
           <Switch>
             <Route exact path="/community-espe" component={moduleStudent} />
-            <Route exact path="/administration" component={moduleAdmin} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/" component={Login} />
           </Switch>

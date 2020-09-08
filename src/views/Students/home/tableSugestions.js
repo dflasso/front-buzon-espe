@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import MaterialTable, { MTableToolbar } from 'material-table';
 import BtnLikeSugestion from './btnLikeSugestions';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -32,6 +32,7 @@ export default function MaterialTableDemo() {
   const [alert, setAlert] = useState({ show: false, msg: null, type: null });
   const [updateView, setUpdateView] = useState(true);
   const classes = useStyles();
+
   const columns = [
     { title: 'Tema', field: 'topic.name', width: '10%', cellStyle: stylesTable.cellLeft },
     { title: 'Sugerencia', field: 'description', width: '40%', cellStyle: stylesTable.cellLeft },
@@ -39,6 +40,13 @@ export default function MaterialTableDemo() {
     { title: 'Me gusta', cellStyle: stylesTable.cellTable, render: rowData => <BtnLikeSugestion />, width: '5%' },
     { title: 'Compartir', cellStyle: stylesTable.cellTable, render: rowData => <BtnShareSuggestion />, width: '5%' },
   ]
+
+
+  useEffect(()=>{
+    if(updateView){
+      getSuggestions();
+    }
+  }, [updateView])
 
   const getSuggestions = async () => {
     await clientBackendHeroko.get("/v1/suggestion").then(
@@ -64,9 +72,8 @@ export default function MaterialTableDemo() {
     );
   }
 
-  const renderTable = () => {
-    if (updateView) {
-      getSuggestions();
+
+    if (updateView) {  
       return (
         <div style={{ padding: '10%' }}>
           <CircularProgress />
@@ -150,11 +157,7 @@ export default function MaterialTableDemo() {
         </div>
       );
     }
-  }
+  
 
-  return (
-    <Fragment>
-      {renderTable()}
-    </Fragment>
-  );
+ 
 }

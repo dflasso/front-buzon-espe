@@ -36,12 +36,13 @@ export const isDecimal = value => {
  * - true: solo contiene números o letras.
  */
 export const isAlphanumeric = value => {
-    if (/[ `!@$%^*_+=[\]{};':"\\|<>/?~]/i.test(value.replace(/ /g, ""))) {
+    if (/[ !@$%^*+={}|&<>?]/i.test(value.replace(/ /g, ""))) {
         return false;
     } else {
         return true;
     }
 }
+
 
 /**
  * @author {Dany_Lasso}

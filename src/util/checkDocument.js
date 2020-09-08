@@ -214,6 +214,21 @@ const ejecMod11 = (digitosIniciales, digitoVerificador, tipo) => {
 }
 
 /**
+  * @author {Dany_Lasso}
+  * @param {string} id 
+  * @returns {boolean} 
+  * - false: el Id no tiene el patron 
+  * - true: el Id  tiene el patron    
+  */
+const validationIdESPE = value => {
+    if (/[A-Z]{1}[0-9]{9}/i.test(value.replace(/ /g, ""))) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+/**
  * @author {Dany_Lasso}
  */
 const checkDocuments = {
@@ -249,6 +264,14 @@ const checkDocuments = {
      * - true: RUC válido Sociedad Pública.   
      */
     validarRucSociedadPublica: validarRucSociedadPublica,
+    /**
+    * @author {Dany_Lasso}
+    * @param {string} id 
+    * @returns {boolean} 
+    * - false: el Id no tiene el patron 
+    * - true: el Id  tiene el patron    
+    */
+    validationIdESPE: validationIdESPE
 
 }
 

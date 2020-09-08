@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import MaterialTable, { MTableToolbar } from 'material-table';
 import { makeStyles } from '@material-ui/core/styles';
 import { clientBackendHeroko } from '../../../config/axios';
@@ -46,6 +46,7 @@ const useStyles = makeStyles(theme => ({
 const TableCompaints = () => {
     const [data, setData] = useState([]);
     const [alert, setAlert] = useState({ show: false, msg: null, type: null });
+    const [update,setUpdate] = useState(true);
     const user = useSelector(state => state.user.data);
     const [stateComplaint, setStateComplaint] = useState({ id: 1, description: 'No procesada' });
     const classes = useStyles();
@@ -58,13 +59,15 @@ const TableCompaints = () => {
         { title: 'PDF', cellStyle: stylesTable.cellTable, render: rowData => <BotonPDF data={rowData} />, width: '5%' },
     ]
 
-    const getComplaints = async () => {
+
+    const getComplaints = useCallback(async () => {
         await clientBackendHeroko.get("/v1/complaint/find/" + user.email + "/" + stateComplaint.description).then(
             response => {
                 if (response.status === 208) {
                     setData(response.data);
                     setStateComplaint({ id: 1, description: 'No procesada' });
                 }
+                setUpdate(false);
             }
         ).catch(
             exception => {
@@ -73,96 +76,17 @@ const TableCompaints = () => {
                 } else {
                     setAlert({ show: true, msg: "Existen problemas de red. Contáctese con soporte.", type: "alert alert-warning m-0 p-0" });
                 }
+                setUpdate(false);
             }
         )
-    }
+    }, [ stateComplaint, user.email ]);
 
-    const renderTable = () => {
-        if (data.length === 0) {
+    useEffect(()=>{
+        if(update){
             getComplaints();
-            return (
-                <div style={{ padding: '10%' }}>
-                    <CircularProgress />
-                </div>
-            );
-        } else {
-            return (
-                <div className={classes.divTable}>
-                    {alert.show ?
-                        <div class={alert.type} role="alert">
-                            <IconButton color="primary" aria-label="upload picture" component="span" onClick={() => setAlert({ show: false })}>
-                                <ClearIcon style={{ color: "#FF0000" }} fontSize="small" />
-                            </IconButton>
-                            {alert.msg}
-                        </div> : null
-                    }
-                    <MaterialTable
-                        title=""
-                        columns={columns}
-                        data={data}
-                        localization={{
-                            toolbar: {
-                                addRemoveColumns: 'Agregue o elimine columnas',
-                                nRowsSelected: ' Filas Seleccionadas',
-                                searchTooltip: 'Buscar',
-                                searchPlaceholder: 'Buscar ...'
-                            },
-                            header: {
-                                actions: ''
-                            },
-                            body: {
-                                emptyDataSourceMessage: 'No existen datos',
-                                addTooltip: 'Agregar ',
-                                deleteTooltip: 'Borrar ',
-                                editTooltip: 'Editar',
-                                editRow: {
-                                    deleteText: '¿Esta Seguro que deseea eliminarlo?',
-                                    cancelTooltip: 'Cancelar',
-                                    saveTooltip: 'Aceptar'
-                                }
-                            }
-                        }}
-
-                        options={{
-                            sorting: false,
-                            pageSize: 5,
-                            headerStyle: {
-                                backgroundColor: '#000000',
-                                color: '#FFFFFF',
-                                borderStyle: 'solid',
-                                borderColor: '#FFFFFF',
-                                borderWidth: '1px',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                                padding: '0px',
-                            },
-                            rowStyle: {
-                                borderStyle: 'solid',
-                                borderColor: '#000000',
-                                borderWidth: '1px 1px ',
-                                alignContent: 'center',
-                                textAlign: 'center'
-                            }
-                        }}
-                        components={{
-                            Toolbar: props => (
-                                <Grid className={classes.header} container spacing={0} >
-                                    <Grid align='left' xs={4} className={classes.botonesHeader}>
-                                        <SendComplaint />
-                                    </Grid>
-                                    <Grid xs={3}>
-                                    </Grid>
-                                    <Grid className={classes.buscador} align='right' xs={3}>
-                                        <MTableToolbar {...props} align='right' />
-                                    </Grid>
-                                </Grid>
-                            )
-                        }}
-                    />
-                </div>
-            );
         }
-    }
+    },[update, getComplaints]);
+
 
     const displayPDF = async (idComplain) => {
         return await clientBackendHerokoFiles.get(`/v1/report/${idComplain}/complaint`).then(
@@ -187,17 +111,104 @@ const TableCompaints = () => {
 
     const BotonPDF = (data) => {
         return (
-            <IconButton aria-label="PDF" className={classes.IconButton} onClick={()=> displayPDF(data.data.idComplaint) }>
+            <IconButton aria-label="PDF" className={classes.IconButton} onClick={() => displayPDF(data.data.idComplaint)}>
                 <Avatar variant="square" src={pdfIcon} className={classes.small} />
             </IconButton>
         );
     }
 
-    return (
-        <Fragment>
-            {renderTable()}
-        </Fragment>
-    );
+    const handleError = notification => {
+        setAlert(notification)
+    }
+
+    const updateView = () => {
+        setUpdate(true);
+    }
+
+    if (update) {
+        return (
+            <div style={{ padding: '10%' }}>
+                <CircularProgress />
+            </div>
+        );
+    } else {
+        return (
+            <div className={classes.divTable}>
+                {alert.show ?
+                    <div class={alert.type} role="alert">
+                        <IconButton color="primary" aria-label="upload picture" component="span" onClick={() => setAlert({ show: false })}>
+                            <ClearIcon style={{ color: "#FF0000" }} fontSize="small" />
+                        </IconButton>
+                        {alert.msg}
+                    </div> : null
+                }
+                <MaterialTable
+                    title=""
+                    columns={columns}
+                    data={data}
+                    localization={{
+                        toolbar: {
+                            addRemoveColumns: 'Agregue o elimine columnas',
+                            nRowsSelected: ' Filas Seleccionadas',
+                            searchTooltip: 'Buscar',
+                            searchPlaceholder: 'Buscar ...'
+                        },
+                        header: {
+                            actions: ''
+                        },
+                        body: {
+                            emptyDataSourceMessage: 'No existen datos',
+                            addTooltip: 'Agregar ',
+                            deleteTooltip: 'Borrar ',
+                            editTooltip: 'Editar',
+                            editRow: {
+                                deleteText: '¿Esta Seguro que deseea eliminarlo?',
+                                cancelTooltip: 'Cancelar',
+                                saveTooltip: 'Aceptar'
+                            }
+                        }
+                    }}
+
+                    options={{
+                        sorting: false,
+                        pageSize: 5,
+                        headerStyle: {
+                            backgroundColor: '#000000',
+                            color: '#FFFFFF',
+                            borderStyle: 'solid',
+                            borderColor: '#FFFFFF',
+                            borderWidth: '1px',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            padding: '0px',
+                        },
+                        rowStyle: {
+                            borderStyle: 'solid',
+                            borderColor: '#000000',
+                            borderWidth: '1px 1px ',
+                            alignContent: 'center',
+                            textAlign: 'center'
+                        }
+                    }}
+                    components={{
+                        Toolbar: props => (
+                            <Grid className={classes.header} container spacing={0} >
+                                <Grid align='left' xs={4} className={classes.botonesHeader}>
+                                    <SendComplaint  showAlert={handleError} updateView={updateView}/>
+                                </Grid>
+                                <Grid xs={3}>
+                                </Grid>
+                                <Grid className={classes.buscador} align='right' xs={3}>
+                                    <MTableToolbar {...props} align='right' />
+                                </Grid>
+                            </Grid>
+                        )
+                    }}
+                />
+            </div>
+        );
+    }
+
 }
 
 export default TableCompaints;

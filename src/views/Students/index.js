@@ -7,21 +7,27 @@ import Header from '../../widgets/header';
 import HomeContent from './home';
 import Suggestions from './Suggestions';
 import Complaint from './Complaint';
+import AdminComplaints from "../Admin/Complaints";
+import AdminSuggestions from "../Admin/Suggestions";
 
 const Home = ({ component: Component, ...rest }) => {
     const itemSelected = useSelector(state => state.resources.itemSelected);
     const isSignedIn = useSelector(state => state.user.auth);
 
     const updateContent = () => {
-        switch (itemSelected.idResource) {
-            case 5:
-                return <HomeContent/>;
-            case 1:
-                return <Suggestions/>;
-            case 2:
-                return <Complaint/>;
+        switch (itemSelected.name) {
+            case "Inicio":
+                return <HomeContent />;
+            case "Sugerencias":
+                return <Suggestions />;
+            case "Denuncias":
+                return <Complaint />;
+            case "Admin. Denuncias":
+                return <AdminComplaints />;
+            case "Admin. Sugerencias":
+                return <AdminSuggestions />;
             default:
-                return <HomeContent/>;
+                return <HomeContent />;
         }
     }
 
@@ -29,7 +35,7 @@ const Home = ({ component: Component, ...rest }) => {
         <Fragment>
             {isSignedIn ?
                 <Fragment>
-                    <Header title={itemSelected.description}/>
+                    <Header title={itemSelected.description} />
                     <main>
                         {updateContent()}
                     </main>
