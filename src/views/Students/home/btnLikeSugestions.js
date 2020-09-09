@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { IconButton, makeStyles } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 
@@ -11,13 +11,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const BtnLikeSugestions = () => {
-
+    const [styleBtn, setStyleBtn] = useState('#9e9e9e');
     const classes = useStyles();
 
+    const handleClick = () => {
+        setStyleBtn('#f44336');
+    }
+    
     return (
         <Fragment>
-            <IconButton color="primary" aria-label="upload picture" component="span" className={classes.IconButton}>
-                <FavoriteIcon  style={{ color: '#9e9e9e' }} />
+            <IconButton color="primary" className={classes.IconButton} 
+            onClick={handleClick}>
+                <FavoriteIcon  style={{ color: styleBtn }} />
             </IconButton>
         </Fragment>
     );
