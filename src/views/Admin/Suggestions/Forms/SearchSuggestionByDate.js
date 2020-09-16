@@ -65,7 +65,7 @@ const FormSearchByDates = ({ onSubmit }) => {
                     <Grid item xs={3}>
                         <input className="form-control"
                             type="date"
-                            min="2020-01-01" max="2020-09-10"
+                            min="2020-01-01" max="2020-09-16"
                             autoComplete="off"
                             name="startDate"
                             value={startDate}
@@ -79,7 +79,7 @@ const FormSearchByDates = ({ onSubmit }) => {
                     <Grid item xs={3}>
                         <input className="form-control"
                             type="date"
-                            min="2020-01-01" max="2020-09-10"
+                            min="2020-01-01" max="2020-09-16"
                             autoComplete="off"
                             name="endDate"
                             value={endDate}
